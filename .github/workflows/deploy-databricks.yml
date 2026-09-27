@@ -25,10 +25,12 @@ jobs:
         working-directory: cloud_files
     env:
       DATABRICKS_AUTH_TYPE: github-oidc
-      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
-      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      # Must equal the audience in the service principal's federation policy.
+      DATABRICKS_TOKEN_AUDIENCE: ${{ secrets.DATABRICKS_ACCOUNT_ID }}
       # The deploying service principal is also the prod run_as identity.
-      BUNDLE_VAR_prod_service_principal: ${{ vars.DATABRICKS_CLIENT_ID }}
+      BUNDLE_VAR_prod_service_principal: ${{ secrets.DATABRICKS_CLIENT_ID }}
     steps:
       - uses: actions/checkout@v7.0.1
 

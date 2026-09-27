@@ -41,6 +41,7 @@ The same service principal is the `run_as` identity for prod.
 3. In GitHub, create the environment `prod` (Settings → Environments) with these variables:
    - `DATABRICKS_HOST` = `https://dbc-1e173d55-6b3b.cloud.databricks.com`
    - `DATABRICKS_CLIENT_ID` = the service principal's application ID
+   - `DATABRICKS_ACCOUNT_ID` = your Databricks account ID (the federation policy's audience)
 
 To validate prod locally, pass the service principal explicitly:
 
