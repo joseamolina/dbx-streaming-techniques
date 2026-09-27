@@ -6,6 +6,11 @@ include:
   - resources/*.yml
   - resources/*/*.yml
 
+variables:
+  prod_service_principal:
+    description: Application ID of the service principal that deploys and runs prod.
+    default: ""
+
 targets:
   # The 'dev' target, for development purposes. This target is the default.
   dev:
@@ -23,6 +28,6 @@ targets:
       # We always use /Users/iosifmh@gmail.com for all resources to make sure we only have a single copy.
       root_path: /Users/iosifmh@gmail.com/.bundle/${bundle.name}/${bundle.target}
     run_as:
-      # This runs as iosifmh@gmail.com in production. We could also use a service principal here,
+      # Runs as the service principal that deploys from GitHub Actions,
       # see https://docs.databricks.com/dev-tools/bundles/permissions.html.
-      user_name: iosifmh@gmail.com
+      service_principal_name: ${var.prod_service_principal}

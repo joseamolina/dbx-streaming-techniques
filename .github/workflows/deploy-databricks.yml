@@ -1,0 +1,41 @@
+name: Deploy Databricks bundle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "cloud_files/**"
+      - ".github/workflows/deploy-databricks.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write # GitHub OIDC token exchanged for a Databricks token
+  contents: read
+
+concurrency:
+  group: databricks-deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: prod
+    defaults:
+      run:
+        working-directory: cloud_files
+    env:
+      DATABRICKS_AUTH_TYPE: github-oidc
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ vars.DATABRICKS_CLIENT_ID }}
+      # The deploying service principal is also the prod run_as identity.
+      BUNDLE_VAR_prod_service_principal: ${{ vars.DATABRICKS_CLIENT_ID }}
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: databricks/setup-cli@v1.18.0
+
+      - name: Validate bundle
+        run: databricks bundle validate --strict -t prod
+
+      - name: Deploy bundle
+        run: databricks bundle deploy -t prod --auto-approve
